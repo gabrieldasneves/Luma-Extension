@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-type ActionButtonVariant = 'play' | 'add'
+export type ActionButtonVariant = 'play' | 'pause' | 'add'
 
 interface ActionButtonProps {
   variant: ActionButtonVariant
@@ -14,37 +14,53 @@ const PlayIcon = () => (
   </svg>
 )
 
+const PauseIcon = () => (
+  <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true">
+    <path d="M1 0l2 0 0 10-2 0z m6 0l2 0 0 10-2 0z" fill="currentColor" />
+  </svg>
+)
+
 const PlusIcon = () => (
   <svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true">
     <path d="M5 1l0 8m-4-4l8 0" stroke="currentColor" strokeWidth="1.5" fill="none" />
   </svg>
 )
 
-const variants = {
+const config: Record<
+  ActionButtonVariant,
+  { label: string; icon: React.ReactNode; base: string; active: string }
+> = {
   play: {
     label: 'Play',
     icon: <PlayIcon />,
-    className: 'border-luma-amber-400 text-luma-amber-400',
+    base: 'border border-luma-amber-400 text-luma-amber-400',
+    active: 'border border-luma-amber-400 text-luma-amber-400',
+  },
+  pause: {
+    label: 'Pause',
+    icon: <PauseIcon />,
+    base: 'bg-luma-amber-400 text-luma-slate-900',
+    active: 'bg-luma-amber-400 text-luma-slate-900',
   },
   add: {
     label: 'Add capture',
     icon: <PlusIcon />,
-    className: 'border-[#35354A] text-luma-gray-400',
+    base: 'border border-[#35354A] text-luma-gray-400',
+    active: 'border border-luma-amber-400 text-luma-amber-400',
   },
 }
 
 export function ActionButton({ variant, disabled = false, onClick }: ActionButtonProps) {
-  const { label, icon, className } = variants[variant]
+  const { label, icon, base, active } = config[variant]
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'flex h-9 w-full items-center justify-center gap-[6px] rounded-[9px] border px-3',
+        'flex h-9 w-full items-center justify-center gap-[6px] rounded-[9px] px-3',
         'text-[12px] font-medium transition-opacity',
-        className,
-        disabled && 'cursor-not-allowed opacity-40'
+        disabled ? `${base} cursor-not-allowed opacity-40` : active
       )}
     >
       {icon}

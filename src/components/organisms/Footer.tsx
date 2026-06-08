@@ -20,6 +20,7 @@ export function Footer({ captureCount, onPreview, onDownload }: FooterProps) {
       <FooterButton
         icon={<Download size={12} strokeWidth={1.5} />}
         label="Download .docx"
+        variant={hasCaptures ? 'primary' : 'default'}
         disabled={!hasCaptures}
         onClick={onDownload}
       />
