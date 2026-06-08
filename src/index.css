@@ -1,0 +1,250 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Luma palette */
+  --luma-amber-400: #f5a623;
+  --luma-amber-300: #fac75a;
+  --luma-slate-900: #1e1e2e;
+  --luma-slate-800: #2a2a3c;
+  --luma-slate-600: #4a4a6a;
+  --luma-white-off: #f8f7f4;
+  --luma-gray-400: #9898aa;
+
+  /* Layout */
+  --luma-popup-width: 380px;
+
+  /* shadcn semantic tokens — dark-first */
+  --background: var(--luma-slate-900);
+  --foreground: var(--luma-white-off);
+  --card: var(--luma-slate-800);
+  --card-foreground: var(--luma-white-off);
+  --popover: var(--luma-slate-800);
+  --popover-foreground: var(--luma-white-off);
+  --primary: var(--luma-amber-400);
+  --primary-foreground: var(--luma-slate-900);
+  --secondary: var(--luma-slate-800);
+  --secondary-foreground: var(--luma-white-off);
+  --muted: var(--luma-slate-800);
+  --muted-foreground: var(--luma-gray-400);
+  --accent: color-mix(in srgb, var(--luma-amber-400) 12%, var(--luma-slate-800));
+  --accent-foreground: var(--luma-amber-300);
+  --destructive: #e05252;
+  --border: var(--luma-slate-600);
+  --input: var(--luma-slate-600);
+  --ring: var(--luma-amber-400);
+  --radius: 0.5rem;
+
+  --chart-1: var(--luma-amber-400);
+  --chart-2: var(--luma-amber-300);
+  --chart-3: var(--luma-slate-600);
+  --chart-4: var(--luma-gray-400);
+  --chart-5: var(--luma-white-off);
+
+  --sidebar: var(--luma-slate-800);
+  --sidebar-foreground: var(--luma-white-off);
+  --sidebar-primary: var(--luma-amber-400);
+  --sidebar-primary-foreground: var(--luma-slate-900);
+  --sidebar-accent: var(--luma-slate-800);
+  --sidebar-accent-foreground: var(--luma-white-off);
+  --sidebar-border: var(--luma-slate-600);
+  --sidebar-ring: var(--luma-amber-400);
+}
+
+.dark {
+  --background: var(--luma-slate-900);
+  --foreground: var(--luma-white-off);
+  --card: var(--luma-slate-800);
+  --card-foreground: var(--luma-white-off);
+  --popover: var(--luma-slate-800);
+  --popover-foreground: var(--luma-white-off);
+  --primary: var(--luma-amber-400);
+  --primary-foreground: var(--luma-slate-900);
+  --secondary: var(--luma-slate-800);
+  --secondary-foreground: var(--luma-white-off);
+  --muted: var(--luma-slate-800);
+  --muted-foreground: var(--luma-gray-400);
+  --accent: color-mix(in srgb, var(--luma-amber-400) 12%, var(--luma-slate-800));
+  --accent-foreground: var(--luma-amber-300);
+  --destructive: #e05252;
+  --border: var(--luma-slate-600);
+  --input: var(--luma-slate-600);
+  --ring: var(--luma-amber-400);
+}
+
+@theme inline {
+  /* Typography */
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+
+  --text-heading: 0.875rem;
+  --text-heading--line-height: 1.4;
+  --text-heading--font-weight: 600;
+
+  --text-body: 0.8125rem;
+  --text-body--line-height: 1.5;
+  --text-body--font-weight: 400;
+
+  --text-metadata: 0.6875rem;
+  --text-metadata--line-height: 1.4;
+  --text-metadata--font-weight: 400;
+
+  /* Luma palette → Tailwind utilities (bg-luma-amber-400, etc.) */
+  --color-luma-amber-400: var(--luma-amber-400);
+  --color-luma-amber-300: var(--luma-amber-300);
+  --color-luma-slate-900: var(--luma-slate-900);
+  --color-luma-slate-800: var(--luma-slate-800);
+  --color-luma-slate-600: var(--luma-slate-600);
+  --color-luma-white-off: var(--luma-white-off);
+  --color-luma-gray-400: var(--luma-gray-400);
+
+  /* Layout */
+  --width-luma-popup: var(--luma-popup-width);
+
+  /* shadcn semantic colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Observation mode animation */
+  --animate-luma-pulse-ring: luma-pulse-ring 2s ease-in-out infinite;
+  --animate-luma-capture-flash: luma-capture-flash 0.4s ease-out;
+}
+
+@keyframes luma-pulse-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--luma-amber-400) 35%, transparent);
+  }
+
+  50% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--luma-amber-400) 18%, transparent);
+  }
+}
+
+@keyframes luma-capture-flash {
+  0% {
+    background-color: color-mix(in srgb, var(--luma-amber-400) 25%, transparent);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    font-size: var(--text-body);
+    font-weight: var(--text-body--font-weight);
+    line-height: var(--text-body--line-height);
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-synthesis: none;
+  }
+
+  body {
+    @apply bg-background text-foreground m-0;
+  }
+
+  #root {
+    width: var(--luma-popup-width);
+    min-height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-heading font-heading text-foreground;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+@layer utilities {
+  .luma-popup {
+    width: var(--luma-popup-width);
+    @apply bg-background text-foreground;
+  }
+
+  .luma-observing {
+    @apply border border-luma-amber-400 animate-luma-pulse-ring;
+  }
+
+  .luma-live-preview {
+    @apply rounded-lg border border-luma-slate-600 bg-luma-slate-800 p-3 text-body text-luma-white-off;
+  }
+
+  .luma-live-preview-active {
+    @apply border-luma-amber-300;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--luma-amber-300) 40%, transparent);
+  }
+
+  .luma-capture-card {
+    @apply rounded-lg border border-luma-slate-600 bg-luma-slate-800 p-3;
+  }
+
+  .luma-capture-flash {
+    @apply animate-luma-capture-flash;
+  }
+
+  .luma-metadata {
+    @apply text-metadata text-luma-gray-400;
+  }
+
+  .luma-empty-state {
+    @apply text-metadata text-luma-gray-400 text-center;
+  }
+}
