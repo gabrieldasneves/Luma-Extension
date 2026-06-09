@@ -137,13 +137,16 @@ type Message =
 
 | Layer | Technology |
 |---|---|
-| Build tool | Vite + CRXJS plugin |
-| UI framework | React + TypeScript |
+| Build tool | Vite 8 + CRXJS plugin |
+| UI framework | React 19 + TypeScript 6 |
 | Styling | Tailwind CSS v4 |
 | Components | shadcn/ui (base-luma preset) |
+| Component architecture | Atomic Design (atoms → molecules → organisms) |
+| Component explorer | Storybook 10 (`@storybook/react-vite`) |
 | Icons | lucide-react |
-| Doc generation | `docx` (browser-compatible) |
+| Doc generation | `docx` v9 (browser-compatible, no server) |
 | Extension API | Chrome Manifest V3 |
+| CI | GitHub Actions — type-check + ESLint on push/PR |
 
 ## Visual Identity
 
@@ -204,12 +207,38 @@ Dark UI with amber accents. Feels like a focused, professional research tool —
 - Markdown or PDF export (Word only for v1)
 - AI summarization of captures
 
+## Component Architecture
+
+Components follow **Atomic Design** under `src/components/`:
+
+```
+src/components/
+├── ui/          ← shadcn/ui primitives
+├── atoms/       ← LogoIcon, StatusDot, SectionLabel, Divider
+├── molecules/   ← Logo, StatusBadge, LivePreview, ActionButton,
+│                   Toolbar, CaptureListHeader, CaptureItem,
+│                   CaptureList, EmptyState, FooterButton
+└── organisms/   ← Header, Body, Footer
+```
+
+Shared types live in `src/types/index.ts`. Export logic lives in `src/lib/export.ts`.
+
+## Storage
+
+| Store | Purpose |
+|---|---|
+| `chrome.storage.session` | Captures — cleared when the browser closes |
+| `chrome.storage.local` | `isObserving` state — persists across sessions |
+
 ## Development
 
-Requires **Node.js 20.19+** or **22.12+**.
+Requires **Node.js 22.12+** (pin with `.nvmrc`: `nvm use`).
 
 ```bash
 npm install
-npm run dev
-npm run build
+npm run dev          # Vite dev server
+npm run build        # Production extension build
+npm run storybook    # Component explorer on http://localhost:6006
+npm run lint         # ESLint
+npx tsc --noEmit     # Type-check
 ```
