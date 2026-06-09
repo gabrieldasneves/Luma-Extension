@@ -6,7 +6,6 @@ const meta: Meta<typeof Footer> = {
   component: Footer,
   decorators: [(Story) => <div className="w-[380px]"><Story /></div>],
   args: {
-    onPreview: () => {},
     onDownload: () => {},
   },
   argTypes: {

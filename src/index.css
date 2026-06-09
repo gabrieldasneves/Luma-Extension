@@ -16,7 +16,8 @@
   --luma-gray-400: #9898aa;
 
   /* Layout */
-  --luma-popup-width: 380px;
+  --luma-popup-min-width: 280px;
+  --luma-popup-height: 580px;
 
   /* shadcn semantic tokens — dark-first */
   --background: var(--luma-slate-900);
@@ -103,7 +104,8 @@
   --color-luma-gray-400: var(--luma-gray-400);
 
   /* Layout */
-  --width-luma-popup: var(--luma-popup-width);
+  --width-luma-popup: 100%;
+  --height-luma-popup: var(--luma-popup-height);
 
   /* shadcn semantic colors */
   --color-background: var(--background);
@@ -193,10 +195,21 @@
     @apply bg-background text-foreground m-0;
   }
 
+  html,
+  body {
+    width: 100%;
+    min-width: var(--luma-popup-min-width);
+    min-height: var(--luma-popup-height);
+    height: 100%;
+    overflow: hidden;
+  }
+
   #root {
-    width: var(--luma-popup-width);
-    min-height: 100vh;
-    overflow-y: auto;
+    width: 100%;
+    min-width: var(--luma-popup-min-width);
+    min-height: var(--luma-popup-height);
+    height: 100%;
+    overflow: hidden;
     box-sizing: border-box;
   }
 
@@ -215,7 +228,10 @@
 
 @layer utilities {
   .luma-popup {
-    width: var(--luma-popup-width);
+    width: 100%;
+    min-width: var(--luma-popup-min-width);
+    min-height: var(--luma-popup-height);
+    height: 100%;
     @apply bg-background text-foreground;
   }
 

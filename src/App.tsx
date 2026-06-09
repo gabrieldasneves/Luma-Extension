@@ -25,9 +25,34 @@ export default function App() {
     ext.storage.local.get(['isObserving'], (r: Record<string, unknown>) => {
       if (r.isObserving) setStatus('observing')
     })
-    ext.storage.session.get(['captures'], (r: Record<string, unknown>) => {
+    ext.storage.session.get(['captures', 'liveSelection'], (r: Record<string, unknown>) => {
       if (Array.isArray(r.captures)) setCaptures(r.captures as Capture[])
+      const live = r.liveSelection as (LiveSource & { text: string }) | undefined
+      if (live?.text) {
+        setLiveText(live.text)
+        setLiveSource({ pageTitle: live.pageTitle, url: live.url, favicon: live.favicon })
+      }
     })
+  }, [])
+
+  useEffect(() => {
+    if (!ext) return
+    const onStorageChanged = (
+      changes: Record<string, chrome.storage.StorageChange>,
+      area: string
+    ) => {
+      if (area !== 'session' || !changes.liveSelection) return
+      const live = changes.liveSelection.newValue as (LiveSource & { text: string }) | undefined
+      if (live?.text) {
+        setLiveText(live.text)
+        setLiveSource({ pageTitle: live.pageTitle, url: live.url, favicon: live.favicon })
+      } else {
+        setLiveText('')
+        setLiveSource(null)
+      }
+    }
+    ext.storage.onChanged.addListener(onStorageChanged)
+    return () => ext.storage.onChanged.removeListener(onStorageChanged)
   }, [])
 
   useEffect(() => {
@@ -42,15 +67,21 @@ export default function App() {
     return () => ext.runtime.onMessage.removeListener(onMessage)
   }, [])
 
-  const handleToggleObserving = () => {
+  const handleToggleObserving = async () => {
     const next: ObservationStatus = status === 'idle' ? 'observing' : 'idle'
     setStatus(next)
     if (next === 'idle') {
       setLiveText('')
       setLiveSource(null)
+      ext?.storage.session.remove('liveSelection')
+    } else if (ext) {
+      const [tab] = await ext.tabs.query({ active: true, currentWindow: true })
+      if (tab?.windowId !== undefined) {
+        await ext.sidePanel.open({ windowId: tab.windowId })
+      }
     }
+    await ext?.storage.local.set({ isObserving: next === 'observing' })
     ext?.runtime.sendMessage({ type: 'SET_ACTIVE', active: next === 'observing' })
-    ext?.storage.local.set({ isObserving: next === 'observing' })
   }
 
   const handleAdd = () => {
@@ -86,7 +117,7 @@ export default function App() {
   return (
     <div
       className={cn(
-        'luma-popup flex h-screen flex-col',
+        'luma-popup flex h-full flex-col',
         status === 'observing' && 'luma-observing'
       )}
     >
@@ -102,7 +133,6 @@ export default function App() {
       />
       <Footer
         captureCount={captures.length}
-        onPreview={() => {}}
         onDownload={handleDownload}
       />
     </div>
