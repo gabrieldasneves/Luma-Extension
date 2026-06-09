@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Luma",
+  "version": "1.0.0",
+  "description": "Illuminate what matters. Capture as you read.",
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Luma"
+  }
+}

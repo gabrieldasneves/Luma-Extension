@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { Header } from '@/components/organisms/Header'
 import { Body } from '@/components/organisms/Body'
 import { Footer } from '@/components/organisms/Footer'
+import { generateDocx } from '@/lib/export'
 import type { Capture, Message, ObservationStatus } from '@/types'
 
 const ext = typeof chrome !== 'undefined' && chrome.runtime?.id ? chrome : null
@@ -21,11 +22,11 @@ export default function App() {
 
   useEffect(() => {
     if (!ext) return
-    ext.storage.local.get(['isObserving'], (r) => {
+    ext.storage.local.get(['isObserving'], (r: Record<string, unknown>) => {
       if (r.isObserving) setStatus('observing')
     })
-    ext.storage.session.get(['captures'], (r) => {
-      if (Array.isArray(r.captures)) setCaptures(r.captures)
+    ext.storage.session.get(['captures'], (r: Record<string, unknown>) => {
+      if (Array.isArray(r.captures)) setCaptures(r.captures as Capture[])
     })
   }, [])
 
@@ -75,8 +76,9 @@ export default function App() {
     ext?.storage.session.set({ captures: next })
   }
 
-  const handleDownload = () => {
-    // TODO: generate .docx with docx library
+  const handleDownload = async () => {
+    if (captures.length === 0) return
+    await generateDocx(captures)
     setCaptures([])
     ext?.storage.session.set({ captures: [] })
   }
