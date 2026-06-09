@@ -86,7 +86,7 @@ export default function App() {
   return (
     <div
       className={cn(
-        'luma-popup flex h-screen flex-col',
+        'luma-popup flex h-full flex-col',
         status === 'observing' && 'luma-observing'
       )}
     >

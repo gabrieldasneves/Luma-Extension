@@ -17,6 +17,7 @@
 
   /* Layout */
   --luma-popup-width: 380px;
+  --luma-popup-height: 580px;
 
   /* shadcn semantic tokens — dark-first */
   --background: var(--luma-slate-900);
@@ -104,6 +105,7 @@
 
   /* Layout */
   --width-luma-popup: var(--luma-popup-width);
+  --height-luma-popup: var(--luma-popup-height);
 
   /* shadcn semantic colors */
   --color-background: var(--background);
@@ -193,10 +195,17 @@
     @apply bg-background text-foreground m-0;
   }
 
+  html,
+  body {
+    width: var(--luma-popup-width);
+    height: var(--luma-popup-height);
+    overflow: hidden;
+  }
+
   #root {
     width: var(--luma-popup-width);
-    min-height: 100vh;
-    overflow-y: auto;
+    height: var(--luma-popup-height);
+    overflow: hidden;
     box-sizing: border-box;
   }
 
@@ -216,6 +225,7 @@
 @layer utilities {
   .luma-popup {
     width: var(--luma-popup-width);
+    height: var(--luma-popup-height);
     @apply bg-background text-foreground;
   }
 
