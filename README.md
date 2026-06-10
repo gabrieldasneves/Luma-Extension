@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="https://github.com/gabrieldasneves/Luma-Extension/blob/main/public/logo.png?raw=true" alt="Luma logo" width="160" />
+  <img src="https://raw.githubusercontent.com/gabrieldasneves/Luma-Extension/develop/public/logo.png" alt="Luma logo" width="160" />
 </p>
 
 <h1 align="center">Luma</h1>
