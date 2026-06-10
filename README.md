@@ -1,8 +1,12 @@
-# Luma
+<p align="center">
+  <img src="https://github.com/gabrieldasneves/Luma-Extension/blob/develop/public/logo.png?raw=true" alt="Luma logo" width="80" />
+</p>
 
-**Illuminate what matters. Capture as you read.**
+<h1 align="center">Luma</h1>
 
-Luma is a Chrome extension that lets users highlight text on any webpage and collect those highlights into a structured Word document — automatically tagged with the source page title and URL.
+<blockquote align="center">
+  <p>Chrome extension that captures highlights as you browse and exports them to Word or PDF with source links included</p>
+</blockquote>
 
 ## Core User Flow
 
@@ -32,12 +36,12 @@ Luma is a Chrome extension that lets users highlight text on any webpage and col
 
 ```ts
 interface Capture {
-  id: string
-  text: string
-  pageTitle: string
-  url: string
-  timestamp: number
-  favicon?: string
+  id: string;
+  text: string;
+  pageTitle: string;
+  url: string;
+  timestamp: number;
+  favicon?: string;
 }
 ```
 
@@ -74,27 +78,30 @@ After a successful download, all captures are cleared from memory.
 ### Extension Structure
 
 ```
-luma/
+Luma-Extension/
 ├── public/
-│   └── manifest.json
+│   ├── manifest.json       # MV3 manifest (side panel, icons, permissions)
+│   └── logo.png
 ├── src/
-│   ├── popup/
-│   │   ├── App.tsx           # Root popup component
-│   │   ├── main.tsx
-│   │   └── components/
-│   │       ├── LivePreview.tsx
-│   │       ├── CaptureList.tsx
-│   │       ├── CaptureItem.tsx
-│   │       └── Toolbar.tsx
-│   ├── content/
-│   │   └── index.ts          # Injected into pages — detects selection
+│   ├── App.tsx             # Root side panel UI
+│   ├── main.tsx
 │   ├── background/
-│   │   └── index.ts          # Service worker — manages storage & message routing
+│   │   └── background.ts   # Service worker — side panel, injection, routing
+│   ├── content/
+│   │   └── content.ts      # Detects text selection on pages
+│   ├── components/         # Atomic Design (atoms → molecules → organisms)
+│   ├── lib/
+│   │   └── export.ts       # .docx and .pdf generation (client-side)
 │   └── types/
-│       └── index.ts          # Shared types (Capture, Message, etc.)
-├── vite.config.ts
+│       └── index.ts        # Shared types (Capture, Message, etc.)
+├── luma_extension.pen      # Design source (Pencil)
+├── vite.config.ts          # Vite 8 + @crxjs/vite-plugin
 └── package.json
 ```
+
+### UI Shell
+
+Luma uses the **Chrome Side Panel API** instead of a popup. The panel stays open while the user browses and selects text — clicking outside does not close it. Opening the extension icon launches the side panel via `chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })`.
 
 ### Manifest (v3)
 
@@ -102,15 +109,20 @@ luma/
 {
   "manifest_version": 3,
   "name": "Luma",
-  "version": "1.0.0",
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
-  "action": { "default_popup": "popup.html" },
-  "background": { "service_worker": "background.js" },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["content.js"],
-    "run_at": "document_idle"
-  }]
+  "permissions": ["storage", "activeTab", "scripting", "tabs", "sidePanel"],
+  "host_permissions": ["<all_urls>"],
+  "side_panel": { "default_path": "index.html" },
+  "background": {
+    "service_worker": "src/background/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/content.ts"],
+      "run_at": "document_idle"
+    }
+  ]
 }
 ```
 
@@ -119,83 +131,89 @@ luma/
 ```ts
 type Message =
   | { type: 'SELECTION_CHANGED'; text: string; pageTitle: string; url: string }
-  | { type: 'ADD_CAPTURE'; capture: Capture }
-  | { type: 'GET_CAPTURES' }
-  | { type: 'DELETE_CAPTURE'; id: string }
-  | { type: 'CLEAR_ALL' }
   | { type: 'SET_ACTIVE'; active: boolean }
 ```
 
+- **Content script** → sends `SELECTION_CHANGED` on text selection (when observing)
+- **Side panel** → sends `SET_ACTIVE` when Play/Pause is toggled
+- **Background** → relays messages, writes `liveSelection` to session storage, injects content scripts into all tabs on activation
+
 ### Storage
 
-| Store | Purpose |
-|---|---|
-| `chrome.storage.session` | Captures array (cleared on browser close) |
-| `chrome.storage.local` | User preferences (observation mode state) |
+| Store                    | Purpose                                                        |
+| ------------------------ | -------------------------------------------------------------- |
+| `chrome.storage.session` | `captures[]` and `liveSelection` (cleared on browser close)  |
+| `chrome.storage.local`   | `isObserving` — persists observation mode across sessions      |
+
+### Multi-tab Support
+
+When observation mode is enabled, the background worker injects the content script into all open `http/https` tabs and re-injects on tab switch or page load. Selection state is read from `chrome.storage.local` on every capture, so new tabs work without a manual refresh.
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Build tool | Vite 8 + CRXJS plugin |
-| UI framework | React 19 + TypeScript 6 |
-| Styling | Tailwind CSS v4 |
-| Components | shadcn/ui (base-luma preset) |
-| Component architecture | Atomic Design (atoms → molecules → organisms) |
-| Component explorer | Storybook 10 (`@storybook/react-vite`) |
-| Icons | lucide-react |
-| Doc generation | `docx` v9 (browser-compatible, no server) |
-| Extension API | Chrome Manifest V3 |
-| CI | GitHub Actions — type-check + ESLint on push/PR |
+| Layer                  | Technology                                      |
+| ---------------------- | ----------------------------------------------- |
+| Build tool             | Vite 8 + CRXJS plugin                           |
+| UI framework           | React 19 + TypeScript 6                         |
+| Styling                | Tailwind CSS v4                                 |
+| Components             | shadcn/ui (base-luma preset)                    |
+| Component architecture | Atomic Design (atoms → molecules → organisms)   |
+| Component explorer     | Storybook 10 (`@storybook/react-vite`)          |
+| Icons                  | lucide-react                                    |
+| Doc generation         | `docx` v9 + `jspdf` (browser-only, no server)   |
+| Extension API          | Chrome Manifest V3                              |
+| CI                     | GitHub Actions — type-check + ESLint on push/PR |
 
 ## Visual Identity
 
-**Name:** Luma — from Latin *lumen* (light). The act of highlighting is an act of illuminating what matters.
+**Name:** Luma — from Latin _lumen_ (light). Highlighting is illuminating what matters.
+
+**Logo:** Gradient teal-to-mint mark on transparent background (`public/logo.png`).
 
 ### Color Palette
 
-| Token | Value | Usage |
-|---|---|---|
-| `luma-amber-400` | `#F5A623` | Primary action, active state glow, Play button |
-| `luma-amber-300` | `#FAC75A` | Hover states, live preview borders |
-| `luma-slate-900` | `#1E1E2E` | Popup background |
-| `luma-slate-800` | `#2A2A3C` | Card / item backgrounds |
-| `luma-slate-600` | `#4A4A6A` | Borders, dividers |
-| `luma-white-off` | `#F8F7F4` | Primary text |
-| `luma-gray-400` | `#9898AA` | Secondary text, metadata |
+| Token             | Value     | Usage                                              |
+| ----------------- | --------- | -------------------------------------------------- |
+| `luma-mint`       | `#2CFFBA` | Primary actions — Play, Pause, Download, accents   |
+| `luma-blue`       | `#2C99FE` | Secondary accent — live preview border, URLs       |
+| `luma-navy`       | `#151924` | Side panel background, text on mint buttons        |
+| `luma-surface`    | `#1C212E` | Cards, capture items, secondary buttons            |
+| `luma-charcoal`   | `#464952` | Borders, dividers, section labels                  |
+| `luma-white-off`  | `#EEF2F7` | Primary text                                       |
+| `luma-gray-400`   | `#8B929E` | Secondary text, metadata                           |
 
 ### Typography
 
-| Role | Size | Weight |
-|---|---|---|
-| Headings | 14px | 600 |
-| Body | 13px | 400 |
+| Role     | Size | Weight      |
+| -------- | ---- | ----------- |
+| Headings | 14px | 600         |
+| Body     | 13px | 400         |
 | Metadata | 11px | 400 (muted) |
 
 Font: **Inter** (via `@fontsource-variable/inter`)
 
 ### UI Tone
 
-Dark UI with amber accents. Feels like a focused, professional research tool — not a toy. Compact but breathable. When observation mode is active, a subtle amber ring pulses on the popup border.
+Dark navy UI with mint and blue accents. Feels like a focused, professional research tool — cool-toned and precise. When observation mode is active, a subtle mint ring pulses on the side panel border.
 
 ### States
 
-| State | Visual Signal |
-|---|---|
-| Idle | Dark popup, play button visible |
-| Observing | Amber badge on extension icon, amber ring on popup |
-| Text selected | Live preview area lights up with selected text |
-| Text captured | Brief flash confirmation, counter increments |
-| Preview | Full list view, download button prominent |
+| State           | Visual Signal                                           |
+| --------------- | ------------------------------------------------------- |
+| Idle            | Dark panel, Play button with mint outline               |
+| Observing       | Mint status dot with glow, mint pulse ring on panel     |
+| Text selected   | Live preview border turns blue, URL shown in blue       |
+| Text captured   | Capture counter increments, item appears in list        |
+| Ready to export | Download .docx / .pdf buttons enabled (mint fill)       |
 
 ### UX Rules
 
-- Popup is fixed width: **380px**, scrollable vertically
+- Side panel fills available width (min **280px**), full height
 - Live preview shows maximum **5 lines** of selected text before truncating
-- Empty state: *"Start browsing and select text to capture"*
-- No confirmation dialogs — undo available for the last capture only (5 second window)
-- Download button disabled until at least 1 capture exists
-- Extension badge shows capture count (max `99+`)
+- Empty state: _"Start browsing and select text to capture"_
+- No confirmation dialogs — captures can be deleted individually
+- Download buttons disabled until at least 1 capture exists
+- Export clears all captures from session memory after download
 
 ## Out of Scope (v1)
 
@@ -225,10 +243,10 @@ Shared types live in `src/types/index.ts`. Export logic lives in `src/lib/export
 
 ## Storage
 
-| Store | Purpose |
-|---|---|
-| `chrome.storage.session` | Captures — cleared when the browser closes |
-| `chrome.storage.local` | `isObserving` state — persists across sessions |
+| Store                    | Purpose                                        |
+| ------------------------ | ---------------------------------------------- |
+| `chrome.storage.session` | Captures — cleared when the browser closes     |
+| `chrome.storage.local`   | `isObserving` state — persists across sessions |
 
 ## Development
 
