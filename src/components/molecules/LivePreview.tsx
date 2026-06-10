@@ -39,15 +39,15 @@ export function LivePreview({ text, source }: LivePreviewProps) {
               {source.favicon ? (
                 <img src={source.favicon} className="h-3 w-3 rounded-full object-cover" alt="" />
               ) : (
-                <span className="block h-3 w-3 shrink-0 rounded-full bg-luma-slate-600" />
+                <span className="block h-3 w-3 shrink-0 rounded-full bg-luma-charcoal" />
               )}
               <span className="text-metadata text-luma-gray-400 truncate">{source.pageTitle}</span>
-              <span className="text-metadata text-luma-amber-400 shrink-0">{shortenUrl(source.url)}</span>
+              <span className="text-metadata text-luma-blue shrink-0">{shortenUrl(source.url)}</span>
             </div>
           )}
         </>
       ) : (
-        <p className="text-center text-[12px] italic text-luma-slate-600">
+        <p className="text-center text-[12px] italic text-luma-charcoal">
           Start browsing and select text to capture...
         </p>
       )}

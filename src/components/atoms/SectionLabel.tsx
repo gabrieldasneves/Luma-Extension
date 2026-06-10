@@ -6,7 +6,7 @@ interface SectionLabelProps {
 
 export function SectionLabel({ children }: SectionLabelProps) {
   return (
-    <span className="text-metadata font-semibold tracking-wide text-luma-slate-600">
+    <span className="text-metadata font-semibold tracking-wide text-luma-charcoal">
       {children}
     </span>
   )

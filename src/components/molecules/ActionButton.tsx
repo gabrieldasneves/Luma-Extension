@@ -33,20 +33,20 @@ const config: Record<
   play: {
     label: 'Play',
     icon: <PlayIcon />,
-    base: 'border border-luma-amber-400 text-luma-amber-400',
-    active: 'border border-luma-amber-400 text-luma-amber-400',
+    base: 'border border-luma-mint text-luma-mint',
+    active: 'border border-luma-mint text-luma-mint',
   },
   pause: {
     label: 'Pause',
     icon: <PauseIcon />,
-    base: 'bg-luma-amber-400 text-luma-slate-900',
-    active: 'bg-luma-amber-400 text-luma-slate-900',
+    base: 'bg-luma-mint text-luma-navy',
+    active: 'bg-luma-mint text-luma-navy',
   },
   add: {
     label: 'Add capture',
     icon: <PlusIcon />,
-    base: 'border border-[#35354A] text-luma-gray-400',
-    active: 'border border-luma-amber-400 text-luma-amber-400',
+    base: 'border border-luma-charcoal text-luma-gray-400',
+    active: 'border border-luma-blue text-luma-blue',
   },
 }
 

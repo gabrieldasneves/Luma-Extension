@@ -27,8 +27,8 @@ export function FooterButton({
         'flex h-[34px] w-full items-center justify-center gap-[6px] rounded-[8px] px-3',
         'text-[12px] transition-opacity',
         variant === 'primary'
-          ? 'bg-luma-amber-400 font-semibold text-luma-slate-900'
-          : 'bg-luma-slate-800 font-medium text-luma-slate-600',
+          ? 'bg-luma-mint font-semibold text-luma-navy'
+          : 'bg-luma-surface font-medium text-luma-charcoal',
         disabled && 'cursor-not-allowed opacity-50'
       )}
     >
