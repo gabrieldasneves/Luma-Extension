@@ -1,5 +1,6 @@
+
 <p align="center">
-  <img src="https://github.com/gabrieldasneves/Luma-Extension/blob/develop/public/logo.png?raw=true" alt="Luma logo" width="80" />
+  <img src="https://github.com/gabrieldasneves/Luma-Extension/blob/main/public/logo.png?raw=true" alt="Luma logo" width="160" />
 </p>
 
 <h1 align="center">Luma</h1>
@@ -48,30 +49,7 @@ interface Capture {
 - Captures are stored in `chrome.storage.session` (cleared when browser closes)
 - Memory counter displayed in the popup header (e.g. `12 captures`)
 
-### Preview Mode
 
-In-popup list of all captures in order of capture. Each entry shows:
-
-- Highlighted text (truncated at 3 lines)
-- Page title + favicon
-- URL (shortened)
-- Timestamp
-
-Items can be deleted individually via a trash icon. Items cannot be reordered — order of capture is preserved.
-
-### Export
-
-Clicking **Download** generates a `.docx` file using the `docx` npm library. The file is downloaded directly in the browser — no server involved.
-
-**Document structure:**
-
-- Title: `Luma — Research Export` + date
-- Each capture as a block:
-  - Highlighted text (styled as a block quote)
-  - Source: `[Page Title](URL)`
-  - Separator line
-
-After a successful download, all captures are cleared from memory.
 
 ## Technical Architecture
 
@@ -99,57 +77,23 @@ Luma-Extension/
 └── package.json
 ```
 
-### UI Shell
 
-Luma uses the **Chrome Side Panel API** instead of a popup. The panel stays open while the user browses and selects text — clicking outside does not close it. Opening the extension icon launches the side panel via `chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })`.
-
-### Manifest (v3)
-
-```json
-{
-  "manifest_version": 3,
-  "name": "Luma",
-  "permissions": ["storage", "activeTab", "scripting", "tabs", "sidePanel"],
-  "host_permissions": ["<all_urls>"],
-  "side_panel": { "default_path": "index.html" },
-  "background": {
-    "service_worker": "src/background/background.ts",
-    "type": "module"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/content/content.ts"],
-      "run_at": "document_idle"
-    }
-  ]
-}
-```
-
-### Message Protocol
-
-```ts
-type Message =
-  | { type: 'SELECTION_CHANGED'; text: string; pageTitle: string; url: string }
-  | { type: 'SET_ACTIVE'; active: boolean }
-```
-
-- **Content script** → sends `SELECTION_CHANGED` on text selection (when observing)
-- **Side panel** → sends `SET_ACTIVE` when Play/Pause is toggled
-- **Background** → relays messages, writes `liveSelection` to session storage, injects content scripts into all tabs on activation
 
 ### Storage
 
-| Store                    | Purpose                                                        |
-| ------------------------ | -------------------------------------------------------------- |
-| `chrome.storage.session` | `captures[]` and `liveSelection` (cleared on browser close)  |
-| `chrome.storage.local`   | `isObserving` — persists observation mode across sessions      |
+
+| Store                    | Purpose                                                     |
+| ------------------------ | ----------------------------------------------------------- |
+| `chrome.storage.session` | `captures[]` and `liveSelection` (cleared on browser close) |
+| `chrome.storage.local`   | `isObserving` — persists observation mode across sessions   |
+
 
 ### Multi-tab Support
 
 When observation mode is enabled, the background worker injects the content script into all open `http/https` tabs and re-injects on tab switch or page load. Selection state is read from `chrome.storage.local` on every capture, so new tabs work without a manual refresh.
 
 ## Tech Stack
+
 
 | Layer                  | Technology                                      |
 | ---------------------- | ----------------------------------------------- |
@@ -164,31 +108,36 @@ When observation mode is enabled, the background worker injects the content scri
 | Extension API          | Chrome Manifest V3                              |
 | CI                     | GitHub Actions — type-check + ESLint on push/PR |
 
+
 ## Visual Identity
 
-**Name:** Luma — from Latin _lumen_ (light). Highlighting is illuminating what matters.
+**Name:** Luma — from Latin *lumen* (light). Highlighting is illuminating what matters.
 
 **Logo:** Gradient teal-to-mint mark on transparent background (`public/logo.png`).
 
 ### Color Palette
 
-| Token             | Value     | Usage                                              |
-| ----------------- | --------- | -------------------------------------------------- |
-| `luma-mint`       | `#2CFFBA` | Primary actions — Play, Pause, Download, accents   |
-| `luma-blue`       | `#2C99FE` | Secondary accent — live preview border, URLs       |
-| `luma-navy`       | `#151924` | Side panel background, text on mint buttons        |
-| `luma-surface`    | `#1C212E` | Cards, capture items, secondary buttons            |
-| `luma-charcoal`   | `#464952` | Borders, dividers, section labels                  |
-| `luma-white-off`  | `#EEF2F7` | Primary text                                       |
-| `luma-gray-400`   | `#8B929E` | Secondary text, metadata                           |
+
+| Token            | Value     | Usage                                            |
+| ---------------- | --------- | ------------------------------------------------ |
+| `luma-mint`      | `#2CFFBA` | Primary actions — Play, Pause, Download, accents |
+| `luma-blue`      | `#2C99FE` | Secondary accent — live preview border, URLs     |
+| `luma-navy`      | `#151924` | Side panel background, text on mint buttons      |
+| `luma-surface`   | `#1C212E` | Cards, capture items, secondary buttons          |
+| `luma-charcoal`  | `#464952` | Borders, dividers, section labels                |
+| `luma-white-off` | `#EEF2F7` | Primary text                                     |
+| `luma-gray-400`  | `#8B929E` | Secondary text, metadata                         |
+
 
 ### Typography
+
 
 | Role     | Size | Weight      |
 | -------- | ---- | ----------- |
 | Headings | 14px | 600         |
 | Body     | 13px | 400         |
 | Metadata | 11px | 400 (muted) |
+
 
 Font: **Inter** (via `@fontsource-variable/inter`)
 
@@ -198,32 +147,24 @@ Dark navy UI with mint and blue accents. Feels like a focused, professional rese
 
 ### States
 
-| State           | Visual Signal                                           |
-| --------------- | ------------------------------------------------------- |
-| Idle            | Dark panel, Play button with mint outline               |
-| Observing       | Mint status dot with glow, mint pulse ring on panel     |
-| Text selected   | Live preview border turns blue, URL shown in blue       |
-| Text captured   | Capture counter increments, item appears in list        |
-| Ready to export | Download .docx / .pdf buttons enabled (mint fill)       |
+
+| State           | Visual Signal                                       |
+| --------------- | --------------------------------------------------- |
+| Idle            | Dark panel, Play button with mint outline           |
+| Observing       | Mint status dot with glow, mint pulse ring on panel |
+| Text selected   | Live preview border turns blue, URL shown in blue   |
+| Text captured   | Capture counter increments, item appears in list    |
+| Ready to export | Download .docx / .pdf buttons enabled (mint fill)   |
+
 
 ### UX Rules
 
 - Side panel fills available width (min **280px**), full height
 - Live preview shows maximum **5 lines** of selected text before truncating
-- Empty state: _"Start browsing and select text to capture"_
+- Empty state: *"Start browsing and select text to capture"*
 - No confirmation dialogs — captures can be deleted individually
 - Download buttons disabled until at least 1 capture exists
 - Export clears all captures from session memory after download
-
-## Out of Scope (v1)
-
-- Image capture
-- PDF support
-- Cross-device sync
-- Folders or tagging
-- Edit after capture
-- Markdown or PDF export (Word only for v1)
-- AI summarization of captures
 
 ## Component Architecture
 
@@ -243,10 +184,12 @@ Shared types live in `src/types/index.ts`. Export logic lives in `src/lib/export
 
 ## Storage
 
+
 | Store                    | Purpose                                        |
 | ------------------------ | ---------------------------------------------- |
 | `chrome.storage.session` | Captures — cleared when the browser closes     |
 | `chrome.storage.local`   | `isObserving` state — persists across sessions |
+
 
 ## Development
 
@@ -260,3 +203,4 @@ npm run storybook    # Component explorer on http://localhost:6006
 npm run lint         # ESLint
 npx tsc --noEmit     # Type-check
 ```
+
