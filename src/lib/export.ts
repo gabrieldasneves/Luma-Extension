@@ -19,7 +19,7 @@ function captureBlock(capture: Capture): Paragraph[] {
     new Paragraph({
       children: [new TextRun({ text: capture.text, size: 24 })],
       border: {
-        left: { style: BorderStyle.THICK, size: 12, color: 'F5A623', space: 12 },
+        left: { style: BorderStyle.THICK, size: 12, color: '2CFFBA', space: 12 },
       },
       indent: { left: 440 },
       spacing: { before: 120, after: 120 },
@@ -28,11 +28,11 @@ function captureBlock(capture: Capture): Paragraph[] {
       alignment: AlignmentType.LEFT,
       spacing: { after: 240 },
       children: [
-        new TextRun({ text: `${capture.pageTitle}  `, color: '9898AA', size: 18 }),
+        new TextRun({ text: `${capture.pageTitle}  `, color: '8B929E', size: 18 }),
         new ExternalHyperlink({
           link: capture.url,
           children: [
-            new TextRun({ text: capture.url, color: 'F5A623', size: 18 }),
+            new TextRun({ text: capture.url, color: '2C99FE', size: 18 }),
           ],
         }),
       ],
@@ -57,7 +57,7 @@ export async function generateDocx(captures: Capture[]): Promise<void> {
             heading: HeadingLevel.HEADING_1,
           }),
           new Paragraph({
-            children: [new TextRun({ text: formatDate(new Date()), color: '9898AA', size: 20 })],
+            children: [new TextRun({ text: formatDate(new Date()), color: '8B929E', size: 20 })],
             spacing: { after: 480 },
           }),
           ...captures.flatMap(captureBlock),

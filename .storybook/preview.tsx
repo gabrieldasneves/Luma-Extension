@@ -5,7 +5,7 @@ const preview: Preview = {
   parameters: {
     backgrounds: {
       options: {
-        luma: { name: 'Luma Dark', value: '#1E1E2E' },
+        luma: { name: 'Luma Dark', value: '#151924' },
         light: { name: 'Light', value: '#ffffff' },
       },
     },

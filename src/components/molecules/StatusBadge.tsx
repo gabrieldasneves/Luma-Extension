@@ -14,7 +14,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
       <span
         className={cn(
           'text-metadata transition-colors duration-300',
-          isObserving ? 'text-luma-amber-400' : 'text-luma-gray-400'
+          isObserving ? 'text-luma-mint' : 'text-luma-gray-400'
         )}
       >
         {status}
