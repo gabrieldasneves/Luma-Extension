@@ -6,7 +6,7 @@ const meta: Meta<typeof Footer> = {
   component: Footer,
   decorators: [(Story) => <div className="w-[380px]"><Story /></div>],
   args: {
-    onDownload: () => {},
+    onDownload: () => undefined,
   },
   argTypes: {
     captureCount: { control: { type: 'number', min: 0 } },
