@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { Header } from '@/components/organisms/Header'
 import { Body } from '@/components/organisms/Body'
 import { Footer } from '@/components/organisms/Footer'
-import { generateDocx } from '@/lib/export'
+import { generateExport, type ExportFormat } from '@/lib/export'
 import type { Capture, Message, ObservationStatus } from '@/types'
 
 const ext = typeof chrome !== 'undefined' && chrome.runtime?.id ? chrome : null
@@ -107,9 +107,9 @@ export default function App() {
     ext?.storage.session.set({ captures: next })
   }
 
-  const handleDownload = async () => {
+  const handleDownload = async (format: ExportFormat) => {
     if (captures.length === 0) return
-    await generateDocx(captures)
+    await generateExport(captures, format)
     setCaptures([])
     ext?.storage.session.set({ captures: [] })
   }

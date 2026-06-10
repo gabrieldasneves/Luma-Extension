@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 interface SectionLabelProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function SectionLabel({ children }: SectionLabelProps) {
@@ -9,5 +9,5 @@ export function SectionLabel({ children }: SectionLabelProps) {
     <span className="text-metadata font-semibold tracking-wide text-luma-charcoal">
       {children}
     </span>
-  )
+  );
 }

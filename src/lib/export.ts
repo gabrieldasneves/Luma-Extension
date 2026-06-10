@@ -8,13 +8,39 @@ import {
   Paragraph,
   TextRun,
 } from 'docx'
+import { jsPDF } from 'jspdf'
 import type { Capture } from '@/types'
 
-function formatDate(d: Date): string {
+export type ExportFormat = 'docx' | 'pdf'
+
+const PDF_COLORS = {
+  text: [30, 33, 46] as [number, number, number],
+  muted: [139, 146, 158] as [number, number, number],
+  mint: [44, 255, 186] as [number, number, number],
+  blue: [44, 153, 254] as [number, number, number],
+  border: [70, 73, 82] as [number, number, number],
+}
+
+function formatDate (d: Date): string {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
-function captureBlock(capture: Capture): Paragraph[] {
+function exportFilename (extension: string): string {
+  return `luma-export-${new Date().toISOString().slice(0, 10)}.${extension}`
+}
+
+function downloadBlob (blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = filename
+  document.body.appendChild(anchor)
+  anchor.click()
+  document.body.removeChild(anchor)
+  URL.revokeObjectURL(url)
+}
+
+function captureBlock (capture: Capture): Paragraph[] {
   return [
     new Paragraph({
       children: [new TextRun({ text: capture.text, size: 24 })],
@@ -40,14 +66,14 @@ function captureBlock(capture: Capture): Paragraph[] {
     new Paragraph({
       text: '',
       border: {
-        bottom: { style: BorderStyle.SINGLE, size: 4, color: '4A4A6A', space: 4 },
+        bottom: { style: BorderStyle.SINGLE, size: 4, color: '464952', space: 4 },
       },
       spacing: { after: 240 },
     }),
   ]
 }
 
-export async function generateDocx(captures: Capture[]): Promise<void> {
+export async function generateDocx (captures: Capture[]): Promise<void> {
   const doc = new Document({
     sections: [
       {
@@ -67,12 +93,73 @@ export async function generateDocx(captures: Capture[]): Promise<void> {
   })
 
   const blob = await Packer.toBlob(doc)
-  const url = URL.createObjectURL(blob)
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = `luma-export-${new Date().toISOString().slice(0, 10)}.docx`
-  document.body.appendChild(anchor)
-  anchor.click()
-  document.body.removeChild(anchor)
-  URL.revokeObjectURL(url)
+  downloadBlob(blob, exportFilename('docx'))
+}
+
+export async function generatePdf (captures: Capture[]): Promise<void> {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const margin = 20
+  const pageHeight = 297
+  const contentWidth = 170
+  const textX = margin + 6
+  let y = margin
+
+  const ensureSpace = (height: number) => {
+    if (y + height > pageHeight - margin) {
+      doc.addPage()
+      y = margin
+    }
+  }
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(18)
+  doc.setTextColor(...PDF_COLORS.text)
+  doc.text('Luma — Research Export', margin, y)
+  y += 9
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(10)
+  doc.setTextColor(...PDF_COLORS.muted)
+  doc.text(formatDate(new Date()), margin, y)
+  y += 14
+
+  for (const capture of captures) {
+    const textLines = doc.splitTextToSize(capture.text, contentWidth)
+    const blockHeight = textLines.length * 5.5 + 18
+    ensureSpace(blockHeight)
+
+    const barTop = y
+    const barBottom = y + Math.max(16, textLines.length * 5.5)
+    doc.setDrawColor(...PDF_COLORS.mint)
+    doc.setLineWidth(1.2)
+    doc.line(margin, barTop, margin, barBottom)
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(11)
+    doc.setTextColor(...PDF_COLORS.text)
+    doc.text(textLines, textX, y + 5)
+    y += textLines.length * 5.5 + 6
+
+    doc.setFontSize(9)
+    doc.setTextColor(...PDF_COLORS.muted)
+    const meta = `${capture.pageTitle}  `
+    doc.text(meta, textX, y)
+    const metaWidth = doc.getTextWidth(meta)
+
+    doc.setTextColor(...PDF_COLORS.blue)
+    doc.textWithLink(capture.url, textX + metaWidth, y, { url: capture.url })
+    y += 8
+
+    doc.setDrawColor(...PDF_COLORS.border)
+    doc.setLineWidth(0.2)
+    doc.line(margin, y, margin + contentWidth, y)
+    y += 12
+  }
+
+  downloadBlob(doc.output('blob'), exportFilename('pdf'))
+}
+
+export async function generateExport (captures: Capture[], format: ExportFormat): Promise<void> {
+  if (format === 'pdf') await generatePdf(captures)
+  else await generateDocx(captures)
 }
