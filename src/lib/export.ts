@@ -98,10 +98,14 @@ export async function generateDocx (captures: Capture[]): Promise<void> {
 
 export async function generatePdf (captures: Capture[]): Promise<void> {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
-  const margin = 20
+  const pageWidth = 210
   const pageHeight = 297
-  const contentWidth = 170
-  const textX = margin + 6
+  const margin = 20
+  const barGap = 6
+  const textX = margin + barGap
+  const contentWidth = pageWidth - margin * 2 - barGap
+  const bodyLineHeight = 5.5
+  const metaLineHeight = 4.5
   let y = margin
 
   const ensureSpace = (height: number) => {
@@ -124,35 +128,33 @@ export async function generatePdf (captures: Capture[]): Promise<void> {
   y += 14
 
   for (const capture of captures) {
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(11)
+    doc.setTextColor(...PDF_COLORS.text)
+
     const textLines = doc.splitTextToSize(capture.text, contentWidth)
-    const blockHeight = textLines.length * 5.5 + 18
+    const blockHeight = textLines.length * bodyLineHeight + 18
     ensureSpace(blockHeight)
 
     const barTop = y
-    const barBottom = y + Math.max(16, textLines.length * 5.5)
+    const barBottom = y + Math.max(16, textLines.length * bodyLineHeight)
     doc.setDrawColor(...PDF_COLORS.mint)
     doc.setLineWidth(1.2)
     doc.line(margin, barTop, margin, barBottom)
 
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(11)
-    doc.setTextColor(...PDF_COLORS.text)
     doc.text(textLines, textX, y + 5)
-    y += textLines.length * 5.5 + 6
+    y += textLines.length * bodyLineHeight + 6
 
     doc.setFontSize(9)
     doc.setTextColor(...PDF_COLORS.muted)
-    const meta = `${capture.pageTitle}  `
-    doc.text(meta, textX, y)
-    const metaWidth = doc.getTextWidth(meta)
-
-    doc.setTextColor(...PDF_COLORS.blue)
-    doc.textWithLink(capture.url, textX + metaWidth, y, { url: capture.url })
-    y += 8
+    const metaLines = doc.splitTextToSize(`${capture.pageTitle}  ${capture.url}`, contentWidth)
+    ensureSpace(metaLines.length * metaLineHeight + 8)
+    doc.text(metaLines, textX, y)
+    y += metaLines.length * metaLineHeight + 4
 
     doc.setDrawColor(...PDF_COLORS.border)
     doc.setLineWidth(0.2)
-    doc.line(margin, y, margin + contentWidth, y)
+    doc.line(margin, y, margin + contentWidth + barGap, y)
     y += 12
   }
 

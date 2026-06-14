@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Luma",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Illuminate what matters. Capture as you read.",
   "permissions": ["storage", "activeTab", "scripting", "tabs", "sidePanel"],
   "host_permissions": ["<all_urls>"],
