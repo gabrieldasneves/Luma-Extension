@@ -1,6 +1,8 @@
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/gabrieldasneves/Luma-Extension/develop/public/logo.png" alt="Luma logo" width="160" />
+  <a href="https://chromewebstore.google.com/detail/okifnkjgkefnhikolbijhhnmlkoiiege">
+    <img src="https://raw.githubusercontent.com/gabrieldasneves/Luma-Extension/develop/public/logo.png" alt="Luma logo" width="160" />
+  </a>
 </p>
 
 <h1 align="center">Luma</h1>
@@ -8,6 +10,10 @@
 <blockquote align="center">
   <p>Chrome extension that captures highlights as you browse and exports them to Word or PDF with source links included</p>
 </blockquote>
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/okifnkjgkefnhikolbijhhnmlkoiiege"><strong>Install on Chrome Web Store →</strong></a>
+</p>
 
 ## Core User Flow
 
