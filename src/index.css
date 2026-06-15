@@ -7,16 +7,24 @@
 
 :root {
   /* Luma palette */
-  --luma-amber-400: #f5a623;
-  --luma-amber-300: #fac75a;
-  --luma-slate-900: #1e1e2e;
-  --luma-slate-800: #2a2a3c;
-  --luma-slate-600: #4a4a6a;
-  --luma-white-off: #f8f7f4;
-  --luma-gray-400: #9898aa;
+  --luma-mint: #2cffba;
+  --luma-navy: #151924;
+  --luma-charcoal: #464952;
+  --luma-blue: #2c99fe;
+  --luma-surface: #1c212e;
+  --luma-white-off: #eef2f7;
+  --luma-gray-400: #8b929e;
+
+  /* legacy aliases — map to new palette */
+  --luma-amber-400: var(--luma-mint);
+  --luma-amber-300: var(--luma-blue);
+  --luma-slate-900: var(--luma-navy);
+  --luma-slate-800: var(--luma-surface);
+  --luma-slate-600: var(--luma-charcoal);
 
   /* Layout */
-  --luma-popup-width: 380px;
+  --luma-popup-min-width: 280px;
+  --luma-popup-height: 580px;
 
   /* shadcn semantic tokens — dark-first */
   --background: var(--luma-slate-900);
@@ -31,8 +39,8 @@
   --secondary-foreground: var(--luma-white-off);
   --muted: var(--luma-slate-800);
   --muted-foreground: var(--luma-gray-400);
-  --accent: color-mix(in srgb, var(--luma-amber-400) 12%, var(--luma-slate-800));
-  --accent-foreground: var(--luma-amber-300);
+  --accent: color-mix(in srgb, var(--luma-mint) 12%, var(--luma-surface));
+  --accent-foreground: var(--luma-blue);
   --destructive: #e05252;
   --border: var(--luma-slate-600);
   --input: var(--luma-slate-600);
@@ -68,8 +76,8 @@
   --secondary-foreground: var(--luma-white-off);
   --muted: var(--luma-slate-800);
   --muted-foreground: var(--luma-gray-400);
-  --accent: color-mix(in srgb, var(--luma-amber-400) 12%, var(--luma-slate-800));
-  --accent-foreground: var(--luma-amber-300);
+  --accent: color-mix(in srgb, var(--luma-mint) 12%, var(--luma-surface));
+  --accent-foreground: var(--luma-blue);
   --destructive: #e05252;
   --border: var(--luma-slate-600);
   --input: var(--luma-slate-600);
@@ -93,17 +101,23 @@
   --text-metadata--line-height: 1.4;
   --text-metadata--font-weight: 400;
 
-  /* Luma palette → Tailwind utilities (bg-luma-amber-400, etc.) */
-  --color-luma-amber-400: var(--luma-amber-400);
-  --color-luma-amber-300: var(--luma-amber-300);
-  --color-luma-slate-900: var(--luma-slate-900);
-  --color-luma-slate-800: var(--luma-slate-800);
-  --color-luma-slate-600: var(--luma-slate-600);
+  /* Luma palette → Tailwind utilities */
+  --color-luma-mint: var(--luma-mint);
+  --color-luma-navy: var(--luma-navy);
+  --color-luma-charcoal: var(--luma-charcoal);
+  --color-luma-blue: var(--luma-blue);
+  --color-luma-surface: var(--luma-surface);
+  --color-luma-amber-400: var(--luma-mint);
+  --color-luma-amber-300: var(--luma-blue);
+  --color-luma-slate-900: var(--luma-navy);
+  --color-luma-slate-800: var(--luma-surface);
+  --color-luma-slate-600: var(--luma-charcoal);
   --color-luma-white-off: var(--luma-white-off);
   --color-luma-gray-400: var(--luma-gray-400);
 
   /* Layout */
-  --width-luma-popup: var(--luma-popup-width);
+  --width-luma-popup: 100%;
+  --height-luma-popup: var(--luma-popup-height);
 
   /* shadcn semantic colors */
   --color-background: var(--background);
@@ -154,17 +168,17 @@
 @keyframes luma-pulse-ring {
   0%,
   100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--luma-amber-400) 35%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--luma-mint) 35%, transparent);
   }
 
   50% {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--luma-amber-400) 18%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--luma-mint) 18%, transparent);
   }
 }
 
 @keyframes luma-capture-flash {
   0% {
-    background-color: color-mix(in srgb, var(--luma-amber-400) 25%, transparent);
+    background-color: color-mix(in srgb, var(--luma-mint) 25%, transparent);
   }
 
   100% {
@@ -193,10 +207,21 @@
     @apply bg-background text-foreground m-0;
   }
 
+  html,
+  body {
+    width: 100%;
+    min-width: var(--luma-popup-min-width);
+    min-height: var(--luma-popup-height);
+    height: 100%;
+    overflow: hidden;
+  }
+
   #root {
-    width: var(--luma-popup-width);
-    min-height: 100vh;
-    overflow-y: auto;
+    width: 100%;
+    min-width: var(--luma-popup-min-width);
+    min-height: var(--luma-popup-height);
+    height: 100%;
+    overflow: hidden;
     box-sizing: border-box;
   }
 
@@ -215,25 +240,28 @@
 
 @layer utilities {
   .luma-popup {
-    width: var(--luma-popup-width);
+    width: 100%;
+    min-width: var(--luma-popup-min-width);
+    min-height: var(--luma-popup-height);
+    height: 100%;
     @apply bg-background text-foreground;
   }
 
   .luma-observing {
-    @apply border border-luma-amber-400 animate-luma-pulse-ring;
+    @apply border border-luma-mint animate-luma-pulse-ring;
   }
 
   .luma-live-preview {
-    @apply rounded-lg border border-luma-slate-600 bg-luma-slate-800 p-3 text-body text-luma-white-off;
+    @apply rounded-lg border border-luma-charcoal bg-luma-surface p-3 text-body text-luma-white-off;
   }
 
   .luma-live-preview-active {
-    @apply border-luma-amber-300;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--luma-amber-300) 40%, transparent);
+    @apply border-luma-blue;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--luma-blue) 40%, transparent);
   }
 
   .luma-capture-card {
-    @apply rounded-lg border border-luma-slate-600 bg-luma-slate-800 p-3;
+    @apply rounded-lg border border-luma-charcoal bg-luma-surface p-3;
   }
 
   .luma-capture-flash {
