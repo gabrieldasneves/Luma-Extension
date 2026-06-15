@@ -2,8 +2,7 @@ import type { Message } from "@/types";
 
 const LUMA_LOADED_KEY = "__lumaContentScriptLoaded";
 
-if ((globalThis as Record<string, unknown>)[LUMA_LOADED_KEY]) {
-} else {
+if (!(globalThis as Record<string, unknown>)[LUMA_LOADED_KEY]) {
   (globalThis as Record<string, unknown>)[LUMA_LOADED_KEY] = true;
 
   let selectionTimer: ReturnType<typeof setTimeout> | null = null;
@@ -31,7 +30,7 @@ if ((globalThis as Record<string, unknown>)[LUMA_LOADED_KEY]) {
         pageTitle: document.title,
         url: window.location.href,
       } satisfies Message)
-      .catch(() => {});
+      .catch(() => undefined);
   }
 
   function scheduleSelectionCheck() {
