@@ -1,5 +1,5 @@
 import { SectionLabel } from '@/components/atoms/SectionLabel'
-import { Divider } from '@/components/atoms/Divider'
+import { Separator } from '@/components/ui/separator'
 import { LivePreview } from '@/components/molecules/LivePreview'
 import { Toolbar } from '@/components/molecules/Toolbar'
 import { CaptureListHeader } from '@/components/molecules/CaptureListHeader'
@@ -42,7 +42,7 @@ export function Body({
         onToggleObserving={onToggleObserving}
         onAdd={onAdd}
       />
-      <Divider />
+      <Separator />
       <CaptureListHeader count={captures.length} />
       {captures.length === 0 ? (
         <EmptyState />
