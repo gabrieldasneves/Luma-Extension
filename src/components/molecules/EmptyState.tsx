@@ -1,6 +1,6 @@
 const HighlightGlyph = () => (
-  <svg viewBox="0 0 18 18" width="20" height="20" aria-hidden="true">
-    <path d="M10 1l7 6-10 10-6 0 0-6z" fill="#8B929E" />
+  <svg viewBox="0 0 18 18" width="20" height="20" aria-hidden="true" className="text-luma-gray-400">
+    <path d="M10 1l7 6-10 10-6 0 0-6z" fill="currentColor" />
   </svg>
 )
 

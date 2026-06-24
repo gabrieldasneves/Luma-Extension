@@ -10,7 +10,7 @@ interface FooterProps {
 export function Footer({ captureCount, onDownload }: FooterProps) {
   const hasCaptures = captureCount > 0
   return (
-    <footer className="flex h-[54px] items-center gap-2 border-t border-luma-charcoal px-4 py-[10px]">
+    <footer className="flex h-[54px] items-center gap-2 border-t border-luma-border px-4 py-[10px]">
       <FooterButton
         icon={<FileText size={12} strokeWidth={1.5} />}
         label="Download .docx"
