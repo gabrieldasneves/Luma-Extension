@@ -45,7 +45,7 @@ const config: Record<
   add: {
     label: 'Add capture',
     icon: <PlusIcon />,
-    base: 'border border-luma-charcoal text-luma-gray-400',
+    base: 'border border-luma-border text-luma-gray-400',
     active: 'border border-luma-blue text-luma-blue',
   },
 }

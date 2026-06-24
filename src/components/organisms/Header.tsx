@@ -8,7 +8,7 @@ interface HeaderProps {
 
 export function Header({ status }: HeaderProps) {
   return (
-    <header className="flex h-12 items-center justify-between border-b border-luma-charcoal px-4">
+    <header className="flex h-12 items-center justify-between border-b border-luma-border px-4">
       <Logo />
       <StatusBadge status={status} />
     </header>

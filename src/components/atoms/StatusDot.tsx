@@ -11,7 +11,7 @@ export function StatusDot({ active = false, className }: StatusDotProps) {
       className={cn(
         'block h-[7px] w-[7px] rounded-full transition-colors duration-300',
         active
-          ? 'bg-luma-mint shadow-[0_0_5px_2px_rgba(44,255,186,0.5)]'
+          ? 'bg-luma-mint shadow-[0_0_5px_2px_color-mix(in_srgb,var(--luma-mint)_50%,transparent)]'
           : 'bg-luma-charcoal',
         className
       )}
