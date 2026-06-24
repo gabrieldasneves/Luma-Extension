@@ -7,8 +7,16 @@ import {
   type Theme,
 } from '@/contexts/theme-context'
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(getThemeFromDocument)
+export function ThemeProvider({
+  children,
+  initialTheme,
+}: {
+  children: ReactNode
+  initialTheme?: Theme
+}) {
+  const [theme, setThemeState] = useState<Theme>(
+    () => initialTheme ?? getThemeFromDocument()
+  )
 
   useEffect(() => {
     applyTheme(theme)
