@@ -1,5 +1,7 @@
 export type ObservationStatus = "idle" | "observing";
 
+export type AppView = "captures" | "images";
+
 export interface Capture {
   id: string;
   text: string;
@@ -25,5 +27,5 @@ export type Message =
   | { type: "CLEAR_ALL" }
   | { type: "SET_ACTIVE"; active: boolean }
   | { type: "GET_PAGE_IMAGES" }
-  | { type: "PAGE_IMAGES"; images: PageImage; pageTitle: string; url: string }
-  | { type: "PAGE_imge_ERROR"; reason: string };
+  | { type: "PAGE_IMAGES"; images: PageImage[]; pageTitle: string; url: string }
+  | { type: "PAGE_IMAGES_ERROR"; reason: string };

@@ -40,6 +40,19 @@ if (!(globalThis as Record<string, unknown>)[LUMA_LOADED_KEY]) {
     }, 100);
   }
 
+  function getPageImages() {
+    const seen = new Set<string>();
+    return Array.from(document.querySelectorAll("img"))
+      .map((img) => ({
+        src: img.currentSrc || img.src,
+        alt: img.alt ?? "",
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      }))
+      .filter(({ src }) => src && !seen.has(src) && seen.add(src))
+      .map((img, i) => ({ ...img, id: `${i}-${img.src}` }));
+  }
+
   document.addEventListener(
     "mouseup",
     () => {
@@ -55,4 +68,15 @@ if (!(globalThis as Record<string, unknown>)[LUMA_LOADED_KEY]) {
     true,
   );
   document.addEventListener("selectionchange", scheduleSelectionCheck);
+
+  chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
+    if (msg.type !== "GET_PAGE_IMAGES") return;
+
+    sendResponse({
+      type: "PAGE_IMAGES",
+      images: getPageImages(),
+      pageTitle: document.title,
+      url: window.location.href,
+    } satisfies Message);
+  });
 }
