@@ -7,11 +7,21 @@ const meta: Meta<typeof Header> = {
   decorators: [(Story) => <div className="w-[380px]"><Story /></div>],
   argTypes: {
     status: { control: 'radio', options: ['idle', 'observing'] },
+    activeView: { control: 'radio', options: ['captures', 'images'] },
   },
 }
 export default meta
 
 type Story = StoryObj<typeof Header>
 
-export const Idle: Story = { args: { status: 'idle' } }
-export const Observing: Story = { args: { status: 'observing' } }
+export const CapturesIdle: Story = {
+  args: { status: 'idle', activeView: 'captures', onViewChange: () => undefined },
+}
+
+export const ImagesIdle: Story = {
+  args: { status: 'idle', activeView: 'images', onViewChange: () => undefined },
+}
+
+export const Observing: Story = {
+  args: { status: 'observing', activeView: 'captures', onViewChange: () => undefined },
+}

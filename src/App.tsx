@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Header } from '@/components/organisms/Header'
 import { Body } from '@/components/organisms/Body'
+import { ImagesBody } from '@/components/organisms/ImagesBody'
 import { Footer } from '@/components/organisms/Footer'
 import { generateExport, type ExportFormat } from '@/lib/export'
-import type { Capture, Message, ObservationStatus } from '@/types'
+import type { AppView, Capture, Message, ObservationStatus } from '@/types'
 
 const ext = typeof chrome !== 'undefined' && chrome.runtime?.id ? chrome : null
 
@@ -19,6 +20,7 @@ export default function App() {
   const [liveText, setLiveText] = useState('')
   const [liveSource, setLiveSource] = useState<LiveSource | null>(null)
   const [captures, setCaptures] = useState<Capture[]>([])
+  const [activeView, setActiveView] = useState<AppView>('captures')
 
   useEffect(() => {
     if (!ext) return
@@ -121,20 +123,30 @@ export default function App() {
         status === 'observing' && 'luma-observing'
       )}
     >
-      <Header status={status} />
-      <Body
+      <Header
         status={status}
-        liveText={liveText}
-        liveSource={liveSource}
-        captures={captures}
-        onToggleObserving={handleToggleObserving}
-        onAdd={handleAdd}
-        onDelete={handleDelete}
+        activeView={activeView}
+        onViewChange={setActiveView}
       />
-      <Footer
-        captureCount={captures.length}
-        onDownload={handleDownload}
-      />
+      {activeView === 'captures' ? (
+        <>
+          <Body
+            status={status}
+            liveText={liveText}
+            liveSource={liveSource}
+            captures={captures}
+            onToggleObserving={handleToggleObserving}
+            onAdd={handleAdd}
+            onDelete={handleDelete}
+          />
+          <Footer
+            captureCount={captures.length}
+            onDownload={handleDownload}
+          />
+        </>
+      ) : (
+        <ImagesBody />
+      )}
     </div>
   )
 }
